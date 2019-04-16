@@ -1,6 +1,7 @@
+/* jshint esversion: 6 */
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '../components/HelloWorld.vue'
+import Home from '../views/Home.vue'
 import gctf from '../components/gctf.vue'
 
 Vue.use(Router)
@@ -18,7 +19,6 @@ export default new Router({
       path: '/gctf',
       name: 'gctf',
       component: gctf
-
     },
     {
       path: '/about',
