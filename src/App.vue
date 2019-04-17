@@ -1,9 +1,18 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link>|
-      <router-link to="/about">About</router-link>|
-      <router-link to="/gctf">GCTF</router-link>
+    <div>
+      <el-menu :default-active="activeIndex" mode="horizontal">
+        <el-menu-item index="1">
+          <router-link to="/list">CUG CTF</router-link>
+        </el-menu-item>
+        <el-menu-item index="2">
+          <router-link to="/login">Center</router-link>
+        </el-menu-item>
+        <el-menu-item index="3">
+          <router-link to="/about">About</router-link>
+        </el-menu-item>
+        <el-menu-item index="4">Notification</el-menu-item>
+      </el-menu>
     </div>
     <router-view/>
   </div>
@@ -17,16 +26,20 @@
   text-align: center;
   color: #2c3e50;
 }
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
+
+<script>
+export default {
+  data () {
+    return {
+      activeIndex: '1',
+      activeIndex2: '1'
+    }
+  },
+  methods: {
+    handleSelect (key, keyPath) {
+      console.log(key, keyPath)
+    }
+  }
+}
+</script>

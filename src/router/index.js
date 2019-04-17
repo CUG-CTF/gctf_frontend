@@ -2,7 +2,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../views/Home.vue'
-import gctf from '../components/gctf.vue'
+import gctf from '../components/login.vue'
+import myList from '../components/mylist.vue'
+import register from '../components/register.vue'
 
 Vue.use(Router)
 
@@ -11,14 +13,24 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
+      path: '/login',
+      name: 'login',
+      component: gctf
+    },
+    {
       path: '/',
       name: 'home',
       component: Home
     },
     {
-      path: '/gctf',
-      name: 'gctf',
-      component: gctf
+      path: '/list',
+      name: 'list',
+      component: myList
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: register
     },
     {
       path: '/about',
