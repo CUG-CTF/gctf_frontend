@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" v-on:click="$router.push('gctf')">
     <HelloWorld msg="Backend based on GO"/>
     <img alt="Go logo" src="../assets/go.jpg">
     <HelloWorld msg="Frontend based on Vue"/>

@@ -30,7 +30,8 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')">注册</el-button>
-        <el-button @click="resetForm('ruleForm')">重置</el-button>
+        <el-button type="warning" @click="resetForm('ruleForm')">重置</el-button>
+        <el-button @click="$router.push('login')">返回</el-button>
       </el-form-item>
     </el-form>
   </div>
