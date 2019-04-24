@@ -1,36 +1,116 @@
 <template>
   <div id="app">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="GCTF"></el-tab-pane>
-      <el-tab-pane label="Login"></el-tab-pane>
-      <el-tab-pane label="About"></el-tab-pane>
-      <el-tab-pane label="Notification"></el-tab-pane>
-    </el-tabs>
-    <router-view/>
+    <el-menu default-active="/" class="top-nav" mode="horizontal" :router=true>
+      <el-menu-item index="/">
+        GCTF
+      </el-menu-item>
+      <el-menu-item index="/challenge/list">
+        Challenge列表
+      </el-menu-item>
+      <el-menu-item index="/challenge/submit">
+        提交Flag
+      </el-menu-item>
+      <el-menu-item index="/rank">
+        排名
+      </el-menu-item>
+      <el-menu-item index="/notification">
+        公告
+      </el-menu-item>
+      <template v-if="inited">
+        <template v-if="isLogin">
+          <el-menu-item index="/user/logout" class="float-right">
+            登出
+          </el-menu-item>
+          <template v-if="isAdmin">
+            <el-menu-item index="/admin/index" class="float-right">
+              管理后台
+            </el-menu-item>
+          </template>
+          <el-menu-item index="/user/index" class="float-right">
+            {{ teamName }}
+          </el-menu-item>
+        </template>
+        <template v-else>
+          <el-menu-item index="/user/register" class="float-right">
+            注册
+          </el-menu-item>
+          <el-menu-item index="/user/login" class="float-right">
+            登录
+          </el-menu-item>
+        </template>
+      </template>
+      <template v-else></template>
+    </el-menu>
+    <div class="main-container">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-</style>
-
 <script>
+import Auth from '@/util/auth'
+import Team from '@/api/Team'
+import System from '@/api/System'
+
 export default {
+  name: 'gctf',
   data () {
     return {
-      activeName: 'zero'
+      inited: false
     }
   },
-  methods: {
-    handleClick (tab) {
-      this.$router.push(tab.label.toLowerCase())
+  computed: {
+    teamName () {
+      return this.$store.state.user.teamName
+    },
+    isLogin () {
+      return this.$store.state.user.isLogin
+    },
+    isAdmin () {
+      return this.$store.state.user.isAdmin
+    }
+  },
+  async mounted () {
+    // 读取配置信息
+    // 不应阻塞
+    System.getMetaInfo().then(metaInfo => {
+      this.$store.commit('setTime', {
+        startTime: metaInfo.startTime,
+        endTime: metaInfo.endTime
+      })
+      this.$store.commit('setFlagFormat', {
+        prefix: metaInfo.flagPrefix,
+        suffix: metaInfo.flagSuffix
+      })
+    })
+    if (!Auth.isLogin()) {
+      this.inited = true
+    } else {
+      try {
+        let result = await Team.getTeamInfo()
+        if (result.admin) {
+          this.$store.commit('enterAdminMode')
+        }
+        this.$store.commit('setTeamName', result.team_name)
+        this.$store.commit('setTeamId', result.team_id)
+        this.$store.commit('setToken', result.token)
+        this.$store.commit('login')
+        this.inited = true
+      } catch (e) {
+        this.inited = true
+      }
     }
   }
 }
 </script>
+
+<style scoped>
+  .float-right {
+    float: right !important;
+  }
+
+  .el-menu {
+    margin: 0 auto 1rem auto;
+    box-shadow: #aaa 1px 1px 1px 0px;
+  }
+</style>
