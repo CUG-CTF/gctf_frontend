@@ -5,7 +5,6 @@ import User from './modules/user'
 import Challenge from './modules/challenge'
 import Hello from '@/components/Hello'
 import Rank from './modules/rank'
-import Notification from './modules/notification'
 
 Vue.use(Router)
 
@@ -21,7 +20,6 @@ export default new Router({
     User,
     Challenge,
     Rank,
-    Notification,
     {
       path: '*',
       name: 'HTTP-404',

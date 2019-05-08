@@ -1,9 +1,9 @@
 /* eslint-disable prefer-promise-reject-errors */
 import axios from 'axios'
-import auth from '@/util/auth'
 
 class Model {
-  base = '/API'
+  base = 'http://ctf.cugapp.com:8081/v1'
+  // base = 'https://api.cugapp.com/mock/17/v1'
   instanse
 
   constructor () {
@@ -31,20 +31,6 @@ class Model {
           method: method,
           url: path
         }
-
-        if (config.needAuth) {
-          if (auth.isTokenExpired) {
-            reject({
-              message: 'token_expired',
-              redirect: 'User-login',
-              action: 'logout'
-            })
-          }
-          options.headers = {
-            'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-          }
-        }
-
         if (method === 'GET') {
           options.params = params
         }
@@ -52,12 +38,10 @@ class Model {
         if (method === 'POST') {
           options.data = params
         }
+        // console.log(params)
         let result = await this.instanse.request(options)
-        if (Object.keys(result.headers).includes('authorization')) {
-          localStorage.setItem('jwt', result.headers['authorization'].slice(7))
-        }
-        if (result.data.status === 'success') {
-          resolve(result.data.data)
+        if (result.status === 200) {
+          resolve(result)
         } else {
           reject('failed')
         }

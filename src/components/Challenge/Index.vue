@@ -2,7 +2,7 @@
   <article class="challenge-body">
     <div class="challenge-content">
       <div class="challenge-item">
-        <span class="challenge-item-key">{{ $t('challenge.description') }}</span>
+        <span class="challenge-item-key">问题描述</span>
         <br>
         <div class="challenge-item-value" v-html="challenge.description">
 
@@ -15,19 +15,19 @@
         </div>
       </div>
       <div class="challenge-item">
-        <span class="challenge-item-key">{{ $t('challenge.baseScore') }}</span>
+        <span class="challenge-item-key">基准分数</span>
         <div class="challenge-item-value">
           {{ challenge.score }}
         </div>
       </div>
       <div class="challenge-item">
-        <span class="challenge-item-key">{{ $t('challenge.nowScore') }}</span>
+        <span class="challenge-item-key">目前分数</span>
         <div class="challenge-item-value">
           {{ challenge.nowScore }}
         </div>
       </div>
       <div class="challenge-item">
-        <span class="challenge-item-key">{{ $t('challenge.solvedCount') }}</span>
+        <span class="challenge-item-key">完成队伍数</span>
         <div class="challenge-item-value">
           <a href="javascript:;" @click="showSolvedTeams(challenge.challenge_id)">{{ challenge.solvedCount }}</a>
         </div>

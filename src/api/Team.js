@@ -3,15 +3,15 @@ import Model from './model'
 class User extends Model {
   /**
    * 登陆
-   * @param email
+   * @param username
    * @param password
    * @returns {Promise}
    */
-  login (email, password) {
+  login (username, password) {
     return new Promise(async (resolve, reject) => {
       try {
-        let result = await this.request('POST', 'Team/login', {
-          email: email,
+        let result = await this.request('POST', '/login', {
+          username: username,
           password: password
         })
         resolve(result)
@@ -25,10 +25,12 @@ class User extends Model {
    * 登出
    * @returns {Promise}
    */
-  logout () {
+  logout (token) {
     return new Promise(async (resolve, reject) => {
       try {
-        let result = await this.request('POST', '/Team/logout', {}, {
+        let result = await this.request('POST', '/user/logout', {
+          token: token
+        }, {
           needAuth: true
         })
         resolve(result)
@@ -40,18 +42,18 @@ class User extends Model {
 
   /**
    * 注册
-   * @param teamName
+   * @param username
    * @param email
    * @param password
    * @returns {Promise}
    */
-  register (teamName, email, password) {
+  register (username, email, password) {
     return new Promise(async (resolve, reject) => {
       try {
-        let result = await this.request('POST', '/Team/register', {
-          teamName: teamName,
-          email: email,
-          password: password
+        let result = await this.request('POST', '/Register', {
+          username: username,
+          password: password,
+          email: email
         })
         resolve(result)
       } catch (e) {
@@ -64,12 +66,14 @@ class User extends Model {
    * 获取用户信息
    * @returns {Promise}
    */
-  getTeamInfo () {
+  getUserInfo (username, token) {
     return new Promise(async (resolve, reject) => {
       try {
-        let result = await this.request('GET', '/Team/info', {}, {
-          needAuth: true
+        let result = await this.request('POST', '/user/userinfo', {
+          token: token,
+          username: username
         })
+        // console.log(result)
         resolve(result)
       } catch (e) {
         reject(e)
@@ -81,13 +85,10 @@ class User extends Model {
    * 获得排行
    * @returns {Promise}
    */
-  getRanking (page = 1, withCount = false) {
+  getRanking () {
     return new Promise(async (resolve, reject) => {
       try {
-        resolve(await this.request('GET', '/Team/ranking', {
-          page: page,
-          withCount: withCount
-        }))
+        resolve(await this.request('GET', '/get_users_rank', {}))
       } catch (e) {
         reject(e)
       }
@@ -102,7 +103,7 @@ class User extends Model {
   select (teamId) {
     return new Promise(async (resolve, reject) => {
       try {
-        resolve(await this.request('GET', '/Team/select', {
+        resolve(await this.request('GET', '/select', {
           teamId: teamId
         }))
       } catch (e) {

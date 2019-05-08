@@ -5,10 +5,13 @@ class Challenge extends Model {
    * 获得所有可用的题目
    * @returns {Promise}
    */
-  getValidChallenges () {
+  getValidChallenges (token, username) {
     return new Promise(async (resolve, reject) => {
       try {
-        let result = await this.request('GET', '/Challenge/list', {}, {
+        let result = await this.request('POST', '/user/get_problem_list', {
+          token: token,
+          username: username
+        }, {
           needAuth: true
         })
         resolve(result)
@@ -39,13 +42,17 @@ class Challenge extends Model {
   }
   /**
    * 提交 Flag
+   * @param username
+   * @param problemID
    * @param flag
    * @returns {Promise}
    */
-  submitFlag (flag) {
+  submitFlag (username, problemID, flag) {
     return new Promise(async (resolve, reject) => {
       try {
-        let result = await this.request('POST', '/Challenge/submitFlag', {
+        let result = await this.request('POST', '/SubmitFlag', {
+          username: username,
+          problem_id: problemID,
           flag: flag
         }, {
           needAuth: true

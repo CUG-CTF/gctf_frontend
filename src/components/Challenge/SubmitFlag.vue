@@ -3,6 +3,7 @@
   <el-col :span="16" :offset="4">
     <el-card>
       <h2>提交Flag</h2>
+      <Box></Box>
       <el-form @submit.native.prevent="submit" v-loading="loading">
         <el-form-item>
           <el-input placeholder="gctf{}/flag{}" class="submit-flag" v-model="form.flag"></el-input>
@@ -30,6 +31,7 @@
 </style>
 <script>
 import Challenge from '@/api/Challenge'
+import subBox from './SubmitBox.vue'
 
 export default {
   data () {
@@ -40,6 +42,9 @@ export default {
       loading: false
     }
   },
+  components: {
+    Box: subBox
+  },
   methods: {
     async submit () {
       if (!this.form.flag) {
@@ -49,13 +54,21 @@ export default {
       }
       this.loading = true
       try {
-        let result = await Challenge.submitFlag(this.form.flag)
+        let result = await Challenge.submitFlag(this.$store.state.user.teamName, 12, this.form.flag)
         this.form.flag = ''
-        this.$message({
-          showClose: true,
-          message: this.$t('恭喜，队伍积分+', [result.score]),
-          type: 'success'
-        })
+        if (!result.succeed) {
+          this.$message({
+            showClose: true,
+            message: '恭喜，队伍积分+' + result.data.msg,
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            showClose: true,
+            message: 'Flag错误',
+            type: 'error'
+          })
+        }
       } catch (e) {
         this.$handleError(e)
       }

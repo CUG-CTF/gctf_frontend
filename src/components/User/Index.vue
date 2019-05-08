@@ -1,12 +1,13 @@
 <template>
+<el-col :span="22" :offset="7">
   <el-card v-loading="loading">
-    <h2> {{ team.team_name }} </h2>
+    <h2> {{ user.username }} </h2>
     <div>
-      <p>{{ $t('user.totalScore') }}: {{ team.score }}</p>
-      <p>Token: <span class="token">{{ team.token }}</span></p>
-      <p>{{ $t('user.ranking') }}: {{team.ranking}} </p>
+      <p>总分: {{ user.score }}</p>
+      <p>Token: <span class="token">{{ this.$store.state.user.userToken }}</span></p>
     </div>
   </el-card>
+</el-col>
 </template>
 <style scoped>
   .token {
@@ -19,14 +20,17 @@ import Team from '@/api/Team'
 export default {
   data () {
     return {
-      team: {},
+      user: {},
       loading: false
     }
   },
   async mounted () {
     this.loading = true
     try {
-      this.team = await Team.getTeamInfo()
+      let result = await Team.getUserInfo(this.$store.state.user.userName, this.$store.state.user.userToken)
+      this.user = result.data
+      // console.log('user')
+      // console.log(this.user)
     } catch (e) {
       this.$handleError(e)
     }

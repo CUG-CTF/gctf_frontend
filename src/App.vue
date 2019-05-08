@@ -10,12 +10,9 @@
       <el-menu-item index="/challenge/submit">
         提交Flag
       </el-menu-item>
-      <el-menu-item index="/rank">
+      <!-- <el-menu-item index="/rank">
         排名
-      </el-menu-item>
-      <el-menu-item index="/notification">
-        公告
-      </el-menu-item>
+      </el-menu-item> -->
       <template v-if="inited">
         <template v-if="isLogin">
           <el-menu-item index="/user/logout" class="float-right">
@@ -50,7 +47,6 @@
 <script>
 import Auth from '@/util/auth'
 import Team from '@/api/Team'
-import System from '@/api/System'
 
 export default {
   name: 'gctf',
@@ -61,7 +57,7 @@ export default {
   },
   computed: {
     teamName () {
-      return this.$store.state.user.teamName
+      return this.$store.state.user.userName
     },
     isLogin () {
       return this.$store.state.user.isLogin
@@ -73,27 +69,15 @@ export default {
   async mounted () {
     // 读取配置信息
     // 不应阻塞
-    System.getMetaInfo().then(metaInfo => {
-      this.$store.commit('setTime', {
-        startTime: metaInfo.startTime,
-        endTime: metaInfo.endTime
-      })
-      this.$store.commit('setFlagFormat', {
-        prefix: metaInfo.flagPrefix,
-        suffix: metaInfo.flagSuffix
-      })
-    })
     if (!Auth.isLogin()) {
       this.inited = true
     } else {
       try {
-        let result = await Team.getTeamInfo()
+        let result = await Team.getuserInfo()
         if (result.admin) {
           this.$store.commit('enterAdminMode')
         }
-        this.$store.commit('setTeamName', result.team_name)
-        this.$store.commit('setTeamId', result.team_id)
-        this.$store.commit('setToken', result.token)
+        this.$store.commit('setuserName', result.username)
         this.$store.commit('login')
         this.inited = true
       } catch (e) {

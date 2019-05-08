@@ -47,10 +47,10 @@
       :closable="false"
       show-icon
     ></el-alert>
-    <el-dialog :title="成功提交的队伍" :visible.sync="solvedTeamsDialogVisible">
-      <el-table :data="solvedTeams" v-loading="dialogLoading">
-        <el-table-column :label="队伍名" prop="teamName"></el-table-column>
-        <el-table-column :label="提交于" prop="solvedAt"></el-table-column>
+    <el-dialog title="成功提交的队伍" :visible.sync="solvedTeamsDialogVisible">
+      <el-table data="solvedTeams" v-loading="dialogLoading">
+        <el-table-column label="队伍名" prop="teamName"></el-table-column>
+        <el-table-column label="提交于" prop="solvedAt"></el-table-column>
       </el-table>
     </el-dialog>
   </el-card>
@@ -106,21 +106,15 @@ export default {
       return Object.keys(this.categories)
     },
     teamToken () {
-      return this.$store.state.user.teamToken
-    },
-    maintenanceDescription () {
-      return this.$t('{0} ~ {1} 期间开放', [this.startTime, this.endTime])
+      return this.$store.state.user.userToken
     }
   },
   methods: {
     async loadChallenges () {
       this.loading = true
       try {
-        let result = await Challenge.getValidChallenges()
-        this.categories = result.challenges
-        this.placeholders = result.placeholders
-        this.solvedChallenges = result.solvedChallenges
-        this.activeTabName = this.categoryNames[0]
+        let result = await Challenge.getValidChallenges(this.$store.state.user.userToken, this.$store.state.user.userName)
+        console.log(result)
       } catch (e) {
         if (e.code === 'under_maintenance') {
           this.available = false

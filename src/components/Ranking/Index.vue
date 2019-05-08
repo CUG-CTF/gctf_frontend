@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="20" :offset="2">
+    <el-col :span="16" :offset="4">
       <el-card>
         <ranking expand></ranking>
       </el-card>

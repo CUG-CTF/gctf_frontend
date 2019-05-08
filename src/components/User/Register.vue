@@ -2,96 +2,77 @@
 <el-row>
   <el-col :span="16" :offset="10">
     <el-card>
-      <el-form
-        :model="ruleForm"
-        status-icon
-        :rules="rules"
-        ref="ruleForm"
-        class="demo-ruleForm"
-      >
-        <h2>注册</h2>
-        <el-form-item label="用户名" prop="user">
-          <el-input type="text" v-model="ruleForm.user" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item
-          prop="email"
-          label="邮箱"
-          :rules="[
-        { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-        { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
-      ]"
-        >
-          <el-input type="email" v-model="ruleForm.email" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="pass">
-          <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass">
-          <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')" class="float-right">注册</el-button>
-        <el-button type="warning" @click="resetForm('ruleForm')">重置</el-button>
-      </el-form>
+      <el-form @keyup.enter.native.prevent="submit" @submit.prevent="submit" v-loading="loading">
+      <h2>注册</h2>
+      <el-form-item>
+        <el-input placeholder='用户名' v-model="form.username"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input placeholder="Email" v-model="form.email"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input type="password" placeholder='密码' v-model="form.password"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input type="password" placeholder='确认密码' v-model="form.password2"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="submit" type="primary" class="float-right">注册</el-button>
+      </el-form-item>
+    </el-form>
     </el-card>
   </el-col>
 </el-row>
 </template>
 
 <script>
+import Team from '@/api/Team'
+
 export default {
   data () {
-    var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'))
-      } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
-        }
-        callback()
-      }
-    }
-    var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error('两次输入密码不一致!'))
-      } else {
-        callback()
-      }
-    }
-    var validateEmail = (rule, value, callback) => {}
-    var validateUser = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('用户名不能为空'))
-      } else {
-        callback()
-      }
-    }
     return {
-      ruleForm: {
-        pass: '',
-        checkPass: '',
-        user: '',
-        email: ''
+      form: {
+        username: '',
+        email: '',
+        password: '',
+        password2: ''
       },
-      rules: {
-        pass: [{ validator: validatePass, trigger: 'blur' }],
-        checkPass: [{ validator: validatePass2, trigger: 'blur' }],
-        email: [{ validator: validateEmail, trigger: 'blur' }],
-        user: [{ validator: validateUser, trigger: 'blur' }]
-      }
+      loading: false
     }
   },
   methods: {
-    submitForm (formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          alert('submit!')
+    async submit () {
+      if (!this.form.username || !this.form.email || !this.form.password || !this.form.password2) {
+        return this.$message.error('请完成表格')
+      }
+      if (this.form.password !== this.form.password2) {
+        return this.$message.error('密码不一致')
+      }
+      this.loading = true
+      try {
+        let result = await Team.register(this.form.user, this.form.email, this.form.pass)
+        console.log('register test')
+        console.log(result)
+        if (result.status === 200) {
+          this.$router.push({
+            name: 'user-login'
+          })
+          this.$notify({
+            title: '提示信息',
+            message: '注册成功',
+            type: 'success'
+          })
         } else {
-          console.log('error submit!!')
-          return false
+          this.$notify({
+            title: '提示信息',
+            message: '注册失败',
+            type: 'error'
+          })
         }
-      })
+      } catch (e) {
+        this.$message.error(e.message)
+      }
+      this.loading = false
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()
