@@ -15,8 +15,8 @@ export default {
     try {
       console.log(this.$store.state.user.userToken)
       console.log(this.$store.state.user.teamName)
-      let result = await Team.logout(this.$store.state.user.userToken, this.$store.state.user.userName)
-      console.log(result)
+      await Team.logout(this.$store.state.user.userToken, this.$store.state.user.userName)
+      // console.log(result)
       this.$store.commit('logout')
       this.$router.push({
         name: 'Index'

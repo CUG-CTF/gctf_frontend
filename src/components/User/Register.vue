@@ -59,8 +59,8 @@ export default {
       this.loading = true
       try {
         let result = await Team.register(this.form.username, this.form.email, this.form.password)
-        console.log('register test')
-        console.log(result)
+        // console.log('register test')
+        // console.log(result)
         if (result.status === 200) {
           this.$router.push({
             name: 'user-login'
