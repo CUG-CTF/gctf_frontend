@@ -45,6 +45,9 @@ export default {
   components: {
     Box: subBox
   },
+  mounted () {
+    this.checkLogin()
+  },
   methods: {
     async submit () {
       if (!this.form.flag) {
@@ -54,9 +57,10 @@ export default {
       }
       this.loading = true
       try {
-        let result = await Challenge.submitFlag(this.$store.state.user.teamName, 12, this.form.flag)
+        let result = await Challenge.submitFlag(this.$store.state.user.userName, 1, this.form.flag, this.$store.state.user.userToken)
         this.form.flag = ''
-        if (!result.succeed) {
+        console.log(result)
+        if (result.succeed) {
           this.$message({
             showClose: true,
             message: '恭喜，队伍积分+' + result.data.msg,
@@ -73,6 +77,11 @@ export default {
         this.$handleError(e)
       }
       this.loading = false
+    },
+    checkLogin () {
+      if (!this.$store.state.user.userToken) {
+        this.$router.push({ path: '/user/login' })
+      }
     }
   }
 }

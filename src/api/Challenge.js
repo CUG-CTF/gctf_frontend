@@ -5,14 +5,15 @@ class Challenge extends Model {
    * 获得所有可用的题目
    * @returns {Promise}
    */
-  getValidChallenges (token, username) {
+  getProblemList (token, username) {
     return new Promise(async (resolve, reject) => {
       try {
         let result = await this.request('POST', '/user/get_problem_list', {
           token: token,
           username: username
         }, {
-          needAuth: true
+          needAuth: true,
+          needlogin: this.getBool(token)
         })
         resolve(result)
       } catch (e) {
@@ -47,15 +48,35 @@ class Challenge extends Model {
    * @param flag
    * @returns {Promise}
    */
-  submitFlag (username, problemID, flag) {
+  submitFlag (username, problemID, flag, token) {
     return new Promise(async (resolve, reject) => {
       try {
-        let result = await this.request('POST', '/SubmitFlag', {
-          username: username,
-          problem_id: problemID,
-          flag: flag
+        let result = await this.request('POST', 'user/submit_flag', {
+          token: token,
+          flag: flag,
+          problem_id: problemID.toFixed(),
+          username: username
         }, {
-          needAuth: true
+          needAuth: true,
+          needlogin: this.getBool(token)
+        })
+        resolve(result)
+      } catch (e) {
+        reject(e)
+      }
+    })
+  }
+
+  startProblem (username, token, problemID) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let result = await this.request('POST', '/user/start_problem', {
+          token: token,
+          problem_id: problemID,
+          username: username
+        }, {
+          needAuth: true,
+          needlogin: this.getBool(token)
         })
         resolve(result)
       } catch (e) {

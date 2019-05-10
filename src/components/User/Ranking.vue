@@ -58,8 +58,8 @@ export default {
     },
     async handleUserList () {
       let result = await Team.getRanking()
-      console.log('test')
-      console.log(result.data)
+      // console.log('test')
+      // console.log(result.data)
       this.allTableData = result.data
     }
   }

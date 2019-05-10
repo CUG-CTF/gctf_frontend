@@ -1,6 +1,6 @@
 <template>
 <el-row>
-  <el-col :span="16" :offset="10">
+  <el-col :span="16" :offset="4">
     <el-card>
       <el-form @keyup.enter.native.prevent="submit" @submit.prevent="submit" v-loading="loading">
       <h2>注册</h2>
@@ -43,14 +43,22 @@ export default {
   methods: {
     async submit () {
       if (!this.form.username || !this.form.email || !this.form.password || !this.form.password2) {
-        return this.$message.error('请完成表格')
+        return this.$message({
+          showClose: true,
+          type: 'warning',
+          message: '请完成表格'
+        })
       }
       if (this.form.password !== this.form.password2) {
-        return this.$message.error('密码不一致')
+        return this.$message({
+          showClose: true,
+          type: 'warning',
+          message: '密码不一致'
+        })
       }
       this.loading = true
       try {
-        let result = await Team.register(this.form.user, this.form.email, this.form.pass)
+        let result = await Team.register(this.form.username, this.form.email, this.form.password)
         console.log('register test')
         console.log(result)
         if (result.status === 200) {
@@ -70,7 +78,11 @@ export default {
           })
         }
       } catch (e) {
-        this.$message.error(e.message)
+        this.$message({
+          showClose: true,
+          type: 'error',
+          message: e.message
+        })
       }
       this.loading = false
     },

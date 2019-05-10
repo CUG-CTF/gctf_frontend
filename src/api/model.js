@@ -22,7 +22,8 @@ class Model {
    * @returns {Promise}
    */
   request (method = 'GET', path = '/', params = {}, config = {
-    needAuth: false
+    needAuth: false,
+    needlogin: true
   }) {
     return new Promise(async (resolve, reject) => {
       console.log(`[${new Date().toISOString()}] ${method} ${path}`)
@@ -31,19 +32,27 @@ class Model {
           method: method,
           url: path
         }
-        if (method === 'GET') {
-          options.params = params
-        }
-
-        if (method === 'POST') {
-          options.data = params
-        }
-        // console.log(params)
-        let result = await this.instanse.request(options)
-        if (result.status === 200) {
-          resolve(result)
+        // console.log(this.$store.state.user.userToken)
+        if (!config.needlogin) {
+          reject({
+            redirect: 'user-login',
+            action: 'logout'
+          })
         } else {
-          reject('failed')
+          if (method === 'GET') {
+            options.params = params
+          }
+
+          if (method === 'POST') {
+            options.data = params
+          }
+          // console.log(params)
+          let result = await this.instanse.request(options)
+          if (result.status === 200) {
+            resolve(result)
+          } else {
+            reject('failed')
+          }
         }
       } catch (e) {
         reject(this.parseErrorResponse(e))
@@ -113,6 +122,12 @@ class Model {
       parsedError.message = 'UNKNOWN ERROR'
     }
     return parsedError
+  }
+
+  getBool (str) {
+    if (str !== '') {
+      return true
+    } else return false
   }
 }
 

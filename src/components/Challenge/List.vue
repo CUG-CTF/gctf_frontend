@@ -4,36 +4,13 @@
     <el-tabs v-model="activeTabName" v-if="available">
       <div v-for="(categoryName, index) in categoryNames" :key="index">
         <el-tab-pane :label="categoryName" :name="categoryName">
-          <span v-if="Object.keys(categories[categoryName]).length === 0">当前无可用题目</span>
-          <el-collapse>
-            <el-collapse-item
-              v-for="levelName in Object.keys(categories[categoryName])"
-              class="challenge-container"
-              :key="categoryName + levelName"
-              :name="categoryName + levelName"
-            >
+          <!-- <span v-if="sortedList[categoryName].length === 0">当前无可用题目</span> -->
+          <el-collapse :value="activeChallenges">
+            <el-collapse-item v-for="challenge in sortedList[categories[categoryName]]" :key="challenge.id" class="challenge-item">
               <template slot="title">
-                <span class="level-title">Level - {{ levelName }}</span>
+                <span class="challenge-item-title">{{ challenge.description }}</span>
               </template>
-              <el-collapse :value="activeChallenges">
-                <el-collapse-item
-                  v-for="challenge in categories[categoryName][levelName]"
-                  :key="challenge.challenge_id"
-                  class="challenge-item"
-                  :class="{'challenge-solved': solvedChallengeIds.includes(challenge.challenge_id)}"
-                  :name="challenge.title"
-                >
-                  <template slot="title">
-                    <span class="challenge-item-title">{{ challenge.title }}</span>
-                    <template v-if="solvedChallengeIds.includes(challenge.challenge_id)">['已解决']</template>
-                  </template>
-                  <challenge-view
-                    :challenge="challenge"
-                    :placeholders="placeholders"
-                    @show="showSolvedTeams"
-                  ></challenge-view>
-                </el-collapse-item>
-              </el-collapse>
+              <challenge-view :challenge="challenge"></challenge-view>
             </el-collapse-item>
           </el-collapse>
         </el-tab-pane>
@@ -47,12 +24,12 @@
       :closable="false"
       show-icon
     ></el-alert>
-    <el-dialog title="成功提交的队伍" :visible.sync="solvedTeamsDialogVisible">
+    <!-- <el-dialog title="成功提交的队伍" :visible.sync="solvedTeamsDialogVisible">
       <el-table data="solvedTeams" v-loading="dialogLoading">
         <el-table-column label="队伍名" prop="teamName"></el-table-column>
         <el-table-column label="提交于" prop="solvedAt"></el-table-column>
       </el-table>
-    </el-dialog>
+    </el-dialog> -->
   </el-card>
 </template>
 <style>
@@ -81,6 +58,8 @@ import View from '@/components/Challenge/Index.vue'
 export default {
   data () {
     return {
+      allProblemList: [],
+      sortedList: {},
       categories: [],
       activeTabName: '',
       loading: false,
@@ -113,19 +92,24 @@ export default {
     async loadChallenges () {
       this.loading = true
       try {
-        let result = await Challenge.getValidChallenges(this.$store.state.user.userToken, this.$store.state.user.userName)
-        console.log(result)
+        let result = await Challenge.getProblemList(this.$store.state.user.userToken, this.$store.state.user.userName)
+        let res = result.data
+        this.categories = res.categories
+        // console.log(this.categories)
+        this.allProblemList = res.problem_list
+        this.sortProblem(this.categories, this.allProblemList)
+        // console.log('loadChallenges')
+        // for (let categoryName in this.categories) {
+        //   // console.log(categoryName)
+        //   console.log(this.sortedList[this.categories[categoryName]])
+        //   // for (let levelName in this.sortedList[this.categories[categoryName]].length) {
+        //   //   console.log(this.sortedList[this.categories[categoryName]])
+        //   // }
+        // }
       } catch (e) {
-        if (e.code === 'under_maintenance') {
-          this.available = false
-          this.startTime = new Date(e.originalMessage[0])
-          this.endTime = new Date(e.originalMessage[1])
-        } else {
-          this.$handleError(e)
-        }
+        this.$handleError(e)
       }
       this.loading = false
-
       // 标记已经完成的题目
       let allChallenges = []
       let solvedChallengeIds = []
@@ -163,6 +147,19 @@ export default {
         this.$handleError(e)
       }
       this.dialogLoading = false
+    },
+    sortProblem (categories, allProblem) {
+      for (let index = 0; index < categories.length; index++) {
+        this.sortedList[categories[index]] = []
+      }
+      // console.log(this.sortedList)
+      for (let index = 0; index < allProblem.length; index++) {
+        // console.log(allProblem[index].category)
+        this.sortedList[allProblem[index].category].push(allProblem[index])
+      }
+      // console.log('test')
+      // console.log(this.sortedList['pwn'])
+      // console.log(this.sortedList)
     }
   }
 }

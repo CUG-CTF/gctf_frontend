@@ -25,11 +25,12 @@ class User extends Model {
    * 登出
    * @returns {Promise}
    */
-  logout (token) {
+  logout (token, username) {
     return new Promise(async (resolve, reject) => {
       try {
         let result = await this.request('POST', '/user/logout', {
-          token: token
+          token: token,
+          username: username
         }, {
           needAuth: true
         })
@@ -50,7 +51,7 @@ class User extends Model {
   register (username, email, password) {
     return new Promise(async (resolve, reject) => {
       try {
-        let result = await this.request('POST', '/Register', {
+        let result = await this.request('POST', '/register', {
           username: username,
           password: password,
           email: email

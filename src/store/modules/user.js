@@ -30,6 +30,7 @@ const mutations = {
   logout: state => {
     state.isLogin = false
     state.userName = ''
+    state.userToken = ''
   }
 }
 

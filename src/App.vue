@@ -7,12 +7,6 @@
       <el-menu-item index="/challenge/list">
         Challenge列表
       </el-menu-item>
-      <el-menu-item index="/challenge/submit">
-        提交Flag
-      </el-menu-item>
-      <!-- <el-menu-item index="/rank">
-        排名
-      </el-menu-item> -->
       <template v-if="inited">
         <template v-if="isLogin">
           <el-menu-item index="/user/logout" class="float-right">

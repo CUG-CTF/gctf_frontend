@@ -3,14 +3,14 @@
     <el-col :span="4">
       <div class="grid-content"></div>
     </el-col>
-    <el-col :span="16">
+    <el-col :span="16" :offset="4">
       <div class="grid-content">
         <router-view>
 
         </router-view>
       </div>
     </el-col>
-    <el-col :span="4">
+    <el-col :span="4" :offset="20">
       <div class="grid-content"></div>
     </el-col>
   </el-row>

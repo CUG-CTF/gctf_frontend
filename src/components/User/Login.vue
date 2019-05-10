@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="16" :offset="10">
+    <el-col>
       <el-card>
         <h2>登录</h2>
         <el-form @keyup.enter.native="submit" v-loading="loading">
@@ -36,7 +36,11 @@ export default {
   methods: {
     async submit () {
       if (!this.form.username || !this.form.password) {
-        return this.$message.error('请完成输入')
+        return this.$message({
+          showClose: true,
+          type: 'warning',
+          message: '请完成输入'
+        })
       }
       this.loading = true
       try {

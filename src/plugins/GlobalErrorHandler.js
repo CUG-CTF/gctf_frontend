@@ -1,7 +1,11 @@
 let install = (Vue, options) => {
   Vue.prototype.$handleError = e => {
     if (e.message) {
-      Vue.prototype.$message.error(e.message)
+      Vue.prototype.$message({
+        showClose: true,
+        type: 'error',
+        message: e.message
+      })
     }
     if (e.redirect) {
       options.router.push({

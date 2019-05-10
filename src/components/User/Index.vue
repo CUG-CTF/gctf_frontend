@@ -1,5 +1,5 @@
 <template>
-<el-col :span="22" :offset="7">
+<el-col :span="16" :offset="4">
   <el-card v-loading="loading">
     <h2> {{ user.username }} </h2>
     <div>
