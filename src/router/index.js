@@ -23,7 +23,8 @@ export default new Router({
     {
       path: '*',
       name: 'HTTP-404',
-      component: resolve => require(['@/components/Common/404.vue'], resolve)
+      // component: resolve => require(['@/components/Common/404.vue'], resolve)
+      component: Hello
     }
   ]
 })
