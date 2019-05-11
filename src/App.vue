@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <el-menu default-active="/" class="top-nav" mode="horizontal" :router=true>
+    <el-menu :default-active="$route.path" class="top-nav" mode="horizontal" :router=true>
       <el-menu-item index="/">
         GCTF
       </el-menu-item>
