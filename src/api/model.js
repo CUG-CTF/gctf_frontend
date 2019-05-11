@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 class Model {
-  base = 'http://ctf.cugapp.com:8081/v1'
+  base = 'ctf.cugapp.com/v1'
   // base = 'https://api.cugapp.com/mock/17/v1'
   instanse
 
